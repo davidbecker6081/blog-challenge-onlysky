@@ -121,14 +121,17 @@ class Category(db.Model):
 
 @app.route("/")
 def index():
+    # There are magic numbers being passed into the methods below, such as how many entries to show in pagination
+    # A better way to do this would be to extract this into a Config class that we could instantiate for various scenarios
+    # In Node, we might keep track of these kinds of constants in the .env file which would then in turn make things
+    # all good for using different environments (just not sure the best approach in python)
     page = request.args.get('page', 1, type=int)
-    posts = get_posts(page, 1)
+    posts = get_posts(page, 10)
     next_url = url_for('index', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('index', page=posts.prev_num) \
         if posts.has_prev else None
-    print(next_url)
-    print(prev_url)
+
     return render_template('index.html', active='home', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 
