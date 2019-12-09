@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from werkzeug.debug import DebuggedApplication
 from wtforms import PasswordField, StringField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Length
 
 from app import commands
 
@@ -128,6 +128,51 @@ class LoginForm(FlaskForm):
 
         self.password.errors.append('Invalid email and/or password specified.')
         return False
+
+
+class CreatePostForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    post_body = StringField('Post', validators=[Length(min=10)])
+
+    def __init__(self, *args, **kwargs):
+        FlaskForm.__init__(self, *args, **kwargs)
+        self.user = None
+
+    # def validate(self):
+    #     rv = FlaskForm.validate(self)
+    #     if not rv:
+    #         return False
+    #
+    #     title = request.form['title']
+    #     post_body = request.form['post']
+    #     if title:
+    #         if post_body:
+    #             return True
+    #
+    #     self.password.errors.append('Invalid title and/or post specified.')
+    #     return False
+
+
+def submit_post(post):
+    db.session.add(post)
+    db.session.commit()
+
+
+@app.route('/create-post/', methods=['GET', 'POST'])
+def create_post():
+    form = CreatePostForm()
+    #
+    # if form.validate_on_submit():
+    #     post = Post(form.title, form.post_body, Category('categoryA'))
+    #     submit_post(post)
+    #     flash('Post Created!')
+    #     return redirect(url_for('index'))
+    if request.method == 'POST':
+        post = Post(form.title, form.post_body, Category('categoryA'))
+        submit_post(post)
+        flash('Post Created!')
+
+    return render_template('create-post.html', form=form)
 
 
 @app.route('/auth/login/', methods=['GET', 'POST'])
