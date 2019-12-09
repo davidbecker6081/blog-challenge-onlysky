@@ -84,7 +84,7 @@ class Category(db.Model):
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template('index.html', active='home')
 
 
 class LoginForm(FlaskForm):
@@ -139,7 +139,7 @@ def account():
 @app.route('/about-me/')
 # @login_required
 def about_me():
-    return render_template('about-me.html')
+    return render_template('about-me.html', user=current_user, active='about-me')
 
 
 @app.before_first_request

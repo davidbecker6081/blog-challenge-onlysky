@@ -22,11 +22,11 @@
     <div class="blog-masthead">
       <div class="container">
         <nav class="nav blog-nav">
-          <a class="nav-link active" href="{{ url_for('index') }}">Home</a>
+          <a class="nav-link {{ 'active' if active=='home' }}" href="{{ url_for('index') }}">Home</a>
           <a class="nav-link" href="#">New features</a>
           <a class="nav-link" href="#">Press</a>
           <a class="nav-link" href="#">New hires</a>
-          <a class="nav-link" href="/about-me">About</a>
+          <a class="nav-link {{ 'active' if active=='about-me' }}" href="/about-me/">About</a>
           {% if current_user.is_authenticated %}
           <div class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
