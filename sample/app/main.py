@@ -37,6 +37,22 @@ def load_user(user_id):
     return User.query.get(user_id) if user_id else None
 
 
+def generate_about_me():
+    random_string = 'Vestibulum id ligula porta felis euismod semper. '
+    for item in range(4):
+        random_string = random_string + random_string
+    return random_string
+
+
+class Profile:
+    def __init__(self, name, email, about=None):
+        self.name = name
+        self.email = email
+        if about is None:
+            about = generate_about_me()
+        self.about = about
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
@@ -139,7 +155,10 @@ def account():
 @app.route('/about-me/')
 # @login_required
 def about_me():
-    return render_template('about-me.html', user=current_user, active='about-me')
+    # Probably would have a table that stores profile information separate from the user table
+    # would then call a method get_profile_user(id) to pass in the correct data to the about page
+    profile = Profile('David Becker', 'email@gmail.com')
+    return render_template('about-me.html', profile=profile, active='about-me')
 
 
 @app.before_first_request
