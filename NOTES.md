@@ -4,6 +4,7 @@
 and knowledge I have, left it as is(...first and foremost, it needs to work)
 - I've left notes in various files if there are things I thought of that would be quick, good improvements, but either
 ran out of time or didn't know how to do them
+- I also didn't test anything, but that would be first priority once I learn how to test in python
 
 #### Archive Page
 - For the archive page, we would pass a filtered list of posts to a view using: 
