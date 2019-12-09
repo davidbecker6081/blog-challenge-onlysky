@@ -138,19 +138,9 @@ class CreatePostForm(FlaskForm):
         FlaskForm.__init__(self, *args, **kwargs)
         self.user = None
 
-    # def validate(self):
-    #     rv = FlaskForm.validate(self)
-    #     if not rv:
-    #         return False
-    #
-    #     title = request.form['title']
-    #     post_body = request.form['post']
-    #     if title:
-    #         if post_body:
-    #             return True
-    #
-    #     self.password.errors.append('Invalid title and/or post specified.')
-    #     return False
+    def validate(self):
+        rv = FlaskForm.validate(self)
+        return rv
 
 
 def submit_post(post):
@@ -161,16 +151,12 @@ def submit_post(post):
 @app.route('/create-post/', methods=['GET', 'POST'])
 def create_post():
     form = CreatePostForm()
-    #
-    # if form.validate_on_submit():
-    #     post = Post(form.title, form.post_body, Category('categoryA'))
-    #     submit_post(post)
-    #     flash('Post Created!')
-    #     return redirect(url_for('index'))
-    if request.method == 'POST':
+
+    if form.validate_on_submit():
         post = Post(form.title, form.post_body, Category('categoryA'))
         submit_post(post)
         flash('Post Created!')
+        return redirect(url_for('index'))
 
     return render_template('create-post.html', form=form)
 
