@@ -37,6 +37,17 @@ def load_user(user_id):
     return User.query.get(user_id) if user_id else None
 
 
+def format_blog_post_date(date):
+    return datetime.strftime(date, '%B %d, %Y')
+
+
+def get_posts():
+    posts = db.session.query(Post).all()
+    for post in posts:
+        post.pub_date = format_blog_post_date(post.pub_date)
+    return posts
+
+
 def generate_about_me():
     random_string = 'Vestibulum id ligula porta felis euismod semper. '
     for item in range(4):
@@ -87,7 +98,7 @@ class Post(db.Model):
         self.category = category
 
     def __repr__(self):
-        return '<Post %r>' % self.title
+        return '<Post %r %r %r>' % (self.title, self.body, datetime.strftime(self.pub_date, '%B %d, %Y'))
 
 
 class Category(db.Model):
@@ -103,7 +114,8 @@ class Category(db.Model):
 
 @app.route("/")
 def index():
-    return render_template('index.html', active='home')
+    posts = get_posts()
+    return render_template('index.html', active='home', posts=posts)
 
 
 class LoginForm(FlaskForm):
@@ -153,7 +165,7 @@ def create_post():
     form = CreatePostForm()
 
     if form.validate_on_submit():
-        post = Post(form.title, form.post_body, Category('categoryA'))
+        post = Post(title=form.title.data, body=form.post_body.data, category=Category('categoryA'))
         submit_post(post)
         flash('Post Created!')
         return redirect(url_for('index'))
