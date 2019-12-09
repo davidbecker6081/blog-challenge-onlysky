@@ -38,6 +38,7 @@ def load_user(user_id):
 
 
 def format_blog_post_date(date):
+    # We could pull the format out into a constants object that we could use throughout the app
     return datetime.strftime(date, '%B %d, %Y')
 
 
@@ -45,6 +46,8 @@ def get_posts():
     posts = db.session.query(Post).all()
     for post in posts:
         post.pub_date = format_blog_post_date(post.pub_date)
+        if post.user_full_name is None:
+            post.user_full_name = 'Anonymous'
     return posts
 
 
@@ -84,21 +87,23 @@ class Post(db.Model):
     title = db.Column(db.String(80))
     body = db.Column(db.Text)
     pub_date = db.Column(db.DateTime)
+    user_full_name = db.Column(db.String(30))
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship(
         'Category', backref=db.backref('posts', lazy='dynamic'))
 
-    def __init__(self, title, body, category, pub_date=None):
+    def __init__(self, title, body, category, user_full_name, pub_date=None):
         self.title = title
         self.body = body
         if pub_date is None:
             pub_date = datetime.utcnow()
         self.pub_date = pub_date
         self.category = category
+        self.user_full_name = user_full_name
 
     def __repr__(self):
-        return '<Post %r %r %r>' % (self.title, self.body, datetime.strftime(self.pub_date, '%B %d, %Y'))
+        return '<Post %r %r %r %r>' % (self.title, self.body, datetime.strftime(self.pub_date, '%B %d, %Y'), self.user_full_name)
 
 
 class Category(db.Model):
@@ -165,7 +170,10 @@ def create_post():
     form = CreatePostForm()
 
     if form.validate_on_submit():
-        post = Post(title=form.title.data, body=form.post_body.data, category=Category('categoryA'))
+        # The user_full_name would ultimately be dynamic, stored in the Profile table mentioned in the about me route
+        # We could also link this profile table to the posts table through a foreign key, but honestly that would be cumbersome
+        # to have to make two requests to get all of the info we need
+        post = Post(title=form.title.data, body=form.post_body.data, category=Category('categoryA'), user_full_name='David')
         submit_post(post)
         flash('Post Created!')
         return redirect(url_for('index'))

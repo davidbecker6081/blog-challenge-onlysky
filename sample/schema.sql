@@ -42,6 +42,7 @@ CREATE TABLE `post` (
   `body` text,
   `pub_date` datetime DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
+  `user_full_name` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   CONSTRAINT `post_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`id`)
