@@ -45,9 +45,12 @@ def generate_about_me():
 
 
 class Profile:
-    def __init__(self, name, email, about=None):
+    def __init__(self, name, email, image=None, about=None):
         self.name = name
         self.email = email
+        if image is None:
+            image = 'https://drinkscoaster.files.wordpress.com/2014/03/bill-murray.jpg?w=788'
+        self.image = image
         if about is None:
             about = generate_about_me()
         self.about = about

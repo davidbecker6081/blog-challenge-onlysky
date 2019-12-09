@@ -2,8 +2,19 @@
 
 {% block container %}
 {% if profile %}
-<div>
-    <p>{{ profile.about }}</p>
-</div>
+    <div class="container">
+        <div class="row p-4">
+            <img class="col-3 img-fluid" src="{{ profile.image }}" />
+            <div class="col">
+                <h3>{{ profile.name }}</h3>
+                <p>{{ profile.about }}</p>
+            <div>
+        </div>
+    </div>
+{% else %}
+    <div class="container">
+        <h3>About Me</h3>
+        <p>Please fill out your about me section</p>
+    </div>
 {% endif %}
 {% endblock %}
