@@ -42,13 +42,15 @@ def format_blog_post_date(date):
     return datetime.strftime(date, '%B %d, %Y')
 
 
-def get_posts():
-    posts = db.session.query(Post).all()
+def get_posts(page, result_count):
+    paginated_posts = Post.query.paginate(page, result_count, False)
+    posts = paginated_posts.items
     for post in posts:
         post.pub_date = format_blog_post_date(post.pub_date)
         if post.user_full_name is None:
             post.user_full_name = 'Anonymous'
-    return posts
+    paginated_posts.items = posts
+    return paginated_posts
 
 
 def generate_about_me():
@@ -119,8 +121,15 @@ class Category(db.Model):
 
 @app.route("/")
 def index():
-    posts = get_posts()
-    return render_template('index.html', active='home', posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = get_posts(page, 1)
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
+    print(next_url)
+    print(prev_url)
+    return render_template('index.html', active='home', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 
 class LoginForm(FlaskForm):

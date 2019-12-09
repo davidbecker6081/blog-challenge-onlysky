@@ -10,8 +10,8 @@
 {% endfor %}
 
 <nav class="blog-pagination">
-    <a class="btn btn-outline-primary" href="#">Older</a>
-    <a class="btn btn-outline-secondary disabled" href="#">Newer</a>
+    <a class="btn btn-outline-primary {{ 'disabled' if prev_url==None }}" href="{{ prev_url }}">Older</a>
+    <a class="btn btn-outline-primary {{ 'disabled' if next_url==None }}" href="{{ next_url }}">Newer</a>
 </nav>
 
 {% endblock %}
